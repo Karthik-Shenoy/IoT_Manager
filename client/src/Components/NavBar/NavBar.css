@@ -1,0 +1,27 @@
+@media (max-width: 768px) {
+    nav {
+        flex-wrap: wrap;
+    }
+
+    .text-lg {
+        text-align: center;
+        width: 100%;
+    }
+
+    .mx-auto {
+        margin-right: 0;
+    }
+
+    .flex {
+        width: 100%;
+        justify-content: center;
+    }
+
+    nav .nav-links {
+        padding-top: 1rem;
+    }
+
+    nav .social-links {
+        padding-top: 1rem;
+    }
+}

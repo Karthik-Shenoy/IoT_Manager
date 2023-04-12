@@ -1,0 +1,21 @@
+/* width */
+.cta-sensor-div::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    display:none;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #1e2430;
+    border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}

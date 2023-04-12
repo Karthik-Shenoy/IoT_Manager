@@ -1,0 +1,15 @@
+@keyframes animateBoxGrow {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);
+}
+/*
+    
+*/
