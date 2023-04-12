@@ -43,7 +43,7 @@ CreateResourceRouter.route('/')
     .put(async (req, res, next) => {
 
     })
-    .post((req, res, next) => {
+    .post((req, response, next) => {
 
         var connectionString = 'HostName=DummyHub77.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=MaZpu9OyelWoRacIGoKSsXHo5GizaVeDuQcDX5BYh4c=';
 
@@ -96,7 +96,10 @@ CreateResourceRouter.route('/')
 
 
                 }
-                createDevice();
+                createDevice().then(()=>{
+                    response.status(200);
+                    response.send("device created sucessfully")
+                });
             }
         });
 

@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useContext, useEffect, useState } from 'react'
+import React, { MouseEventHandler, useContext, useEffect, useRef, useState } from 'react'
 import SideBar from './SideBar'
 import GraphView from './GraphView'
 import OverlayDialog from '../../Components/CreateDevice/OverlayDialog';
@@ -12,6 +12,9 @@ function DashBoard() {
     let [deviceName, setDeviceName] = useState("");
     let [showDialog, setShowDialog] = useState(false);
     let { userUID, setUserUID } = useContext(UserContext);
+    let [refresCallbacks, setRefreshCallBacks] = useState<Function[]>([]);
+
+
     const loadSensorDevices = (event: React.MouseEvent) => {
         //event.stopPropagation();
         const clickEventTarget = event ? event.target : null;
@@ -41,14 +44,19 @@ function DashBoard() {
             setShowDialog(false);
         }, 800);
     }
+    const refresh: Function = () => {
+        for(let callback of refresCallbacks){
+            callback();
+        }
+    }
     return (
         <div className="flex flex-row bg-gray-900 justify-center pt-10">
-            <OverlayDialog isOpen={showDialog} closeDialog={closeDialog}>
+            <OverlayDialog isOpen={showDialog} closeDialog={closeDialog} refresh={refresh}>
                 <GraphView sensorId={sensorId}
                     deviceName={deviceName} deviceId={deviceId}
                     loadSensorChart={loadSensorChart}
                 />
-                <SideBar loadSensorDevices={loadSensorDevices} openCreateDevice={openDialog} />
+                <SideBar loadSensorDevices={loadSensorDevices} openCreateDevice={openDialog} setRefreshCallbacks={setRefreshCallBacks}/>
             </OverlayDialog>
         </div>
     )

@@ -17,7 +17,8 @@ function SensorInfo(props: any) {
   let [realTimeFlag, setRealTimeFlag] = useState(false);
   let realTimeFlagRef = useRef(realTimeFlag);
   let reRenderRef = useRef(reRender);
-  let { webSocket } = useContext(UserContext);
+  let { webSocket, setWebSocket,} = useContext(UserContext);
+  let [ INIT_SOCKET, setInitSocket ] = useState<boolean>(true);
 
 
 
@@ -95,11 +96,12 @@ function SensorInfo(props: any) {
     }
     loadData();
 
-    if (webSocket) {
-      console.log("initsocket")
+    if (webSocket && INIT_SOCKET) {
+      console.log("on message initialized")
+
       webSocket.onmessage = (event: MessageEvent<any>) => {
         let dataBaseEventObject = JSON.parse(event.data);
-
+        
         console.log(dataBaseEventObject);
         if (realTimeFlagRef.current) {
           console.log("IN");
@@ -108,6 +110,9 @@ function SensorInfo(props: any) {
           reRenderRef.current = newValue;
         }
       }
+
+      setWebSocket(webSocket);
+      setInitSocket(false);
     }
 
     return (() => {

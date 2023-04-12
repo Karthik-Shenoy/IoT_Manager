@@ -81,6 +81,10 @@ function GraphPlot(props: GraphPropType) {
             setPlotDate(getDateInFormat(dateRange.min, true));
             if (datePicker.value === "") {
                 datePicker.value = dateRange.min;
+                
+            }
+            else{
+                setPlotDate(getDateInFormat(datePicker.value, true));
             }
             if (props.sensorId == "no_value")
                 datePicker.value = "";

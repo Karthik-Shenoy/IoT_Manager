@@ -17,7 +17,7 @@ export const UserContext = createContext<ContextType>({
   userUID: "",
   webSocket: null,
   setUserUID: () => { },
-  setWebSocket: () => { }
+  setWebSocket: () => { },
 });
 function App() {
   const [userUID, setUserUID] = useState("");
@@ -42,7 +42,12 @@ function App() {
   }, [userUID])
   return (
     <>
-      <UserContext.Provider value={{ userUID, webSocket, setUserUID, setWebSocket}}>
+      <UserContext.Provider value={{
+        userUID,
+        webSocket,
+        setUserUID,
+        setWebSocket,
+      }}>
         <BrowserRouter>
           <NavBar />
           <Routes>
