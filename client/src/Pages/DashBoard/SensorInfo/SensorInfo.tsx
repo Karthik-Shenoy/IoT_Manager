@@ -9,7 +9,16 @@ enum FlagValues {
   IS_LOADING = 2,
 }
 
-function SensorInfo(props: any) {
+interface SensorInfoPropType {
+  deviceId: string,
+  loadSensorChart: React.MouseEventHandler,
+  getAndSetData: Function,
+  notifyRealTime: Function,
+  setRefreshCallbacks: React.Dispatch<React.SetStateAction<Set<Function>>>
+  openDialog: Function
+}
+
+function SensorInfo(props: SensorInfoPropType) {
   let devices = new Map<string, any[]>();
   let [renderLst, setRenderLst] = useState([<></>]);
   let [isLoading, setIsLoading] = useState(false);
@@ -17,8 +26,8 @@ function SensorInfo(props: any) {
   let [realTimeFlag, setRealTimeFlag] = useState(false);
   let realTimeFlagRef = useRef(realTimeFlag);
   let reRenderRef = useRef(reRender);
-  let { webSocket, setWebSocket,} = useContext(UserContext);
-  let [ INIT_SOCKET, setInitSocket ] = useState<boolean>(true);
+  let { webSocket, setWebSocket, } = useContext(UserContext);
+  let [INIT_SOCKET, setInitSocket] = useState<boolean>(true);
 
 
 
@@ -46,13 +55,28 @@ function SensorInfo(props: any) {
           sensorId: sensorId
         }),
       });
-      alert("device sucessfully provisoned");
-      setReRender(!reRenderRef);
     }
-    addSensorToProvisonedLst();
+    addSensorToProvisonedLst().then(() => {
+      const newValue = !reRenderRef.current;
+      setReRender(newValue);
+      reRenderRef.current = newValue;
+      props.openDialog(2);
+    });
   }
 
+  useEffect(() => {
 
+    props.setRefreshCallbacks((prevState: Set<Function>) => {
+      prevState.add(() => {
+        const newValue = !(reRenderRef.current)
+        setReRender(newValue);
+        reRenderRef.current = newValue;
+      })
+      return prevState;
+    })
+
+    
+  }, [])
 
   useEffect(() => {
     const loadData = async () => {
@@ -101,7 +125,7 @@ function SensorInfo(props: any) {
 
       webSocket.onmessage = (event: MessageEvent<any>) => {
         let dataBaseEventObject = JSON.parse(event.data);
-        
+
         console.log(dataBaseEventObject);
         if (realTimeFlagRef.current) {
           console.log("IN");

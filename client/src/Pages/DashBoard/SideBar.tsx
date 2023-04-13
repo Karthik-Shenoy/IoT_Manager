@@ -7,7 +7,7 @@ import Loader from '../../Components/Loader/Loader'
 interface SideBarPropType {
   loadSensorDevices: MouseEventHandler<HTMLDivElement>
   openCreateDevice: Function,
-  setRefreshCallbacks: React.Dispatch<React.SetStateAction<Function[]>>
+  setRefreshCallbacks: React.Dispatch<React.SetStateAction<Set<Function>>>
 }
 
 function SideBar(props: SideBarPropType) {
@@ -25,11 +25,15 @@ function SideBar(props: SideBarPropType) {
     if (!buttonElement)
       return;
     const clickHandler = () => {
-      props.openCreateDevice();
-      props.setRefreshCallbacks([() => {
-        setReRender(!reRender)
-      }])
+      props.openCreateDevice(1);
     }
+
+    props.setRefreshCallbacks((prevState: Set<Function>) => {
+      prevState.add(() => {
+        setReRender(!reRender)
+      })
+      return prevState;
+    })
 
 
     buttonElement.addEventListener("click", clickHandler)

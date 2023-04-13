@@ -10,9 +10,9 @@ function DashBoard() {
     let [sensorId, setSensorId] = useState(NO_VALUE);
     let [deviceId, setDeviceId] = useState(NO_VALUE);
     let [deviceName, setDeviceName] = useState("");
-    let [showDialog, setShowDialog] = useState(false);
+    let [dialogType, setDialogType] = useState(0);
     let { userUID, setUserUID } = useContext(UserContext);
-    let [refresCallbacks, setRefreshCallBacks] = useState<Function[]>([]);
+    let [refresCallbacks, setRefreshCallBacks] = useState<Set<Function>>(new Set<Function>());
 
 
     const loadSensorDevices = (event: React.MouseEvent) => {
@@ -36,27 +36,31 @@ function DashBoard() {
 
 
 
-    const openDialog: Function = () => {
-        setShowDialog(!showDialog)
+    const openDialog: Function = (dialogType: number) => {
+        setDialogType(dialogType)
     }
     const closeDialog: Function = () => {
         setTimeout(() => {
-            setShowDialog(false);
+            setDialogType(0);
         }, 800);
     }
     const refresh: Function = () => {
-        for(let callback of refresCallbacks){
-            callback();
+        for(let callBack of refresCallbacks){
+            console.log(callBack)
+            callBack();
         }
     }
     return (
         <div className="flex flex-row bg-gray-900 justify-center pt-10">
-            <OverlayDialog isOpen={showDialog} closeDialog={closeDialog} refresh={refresh}>
+            <OverlayDialog dialogType={dialogType} closeDialog={closeDialog} refresh={refresh}>
                 <GraphView sensorId={sensorId}
-                    deviceName={deviceName} deviceId={deviceId}
+                    deviceName={deviceName} 
+                    deviceId={deviceId}
                     loadSensorChart={loadSensorChart}
+                    setRefreshCallbacks={setRefreshCallBacks}
+                    openDialog={openDialog}
                 />
-                <SideBar loadSensorDevices={loadSensorDevices} openCreateDevice={openDialog} setRefreshCallbacks={setRefreshCallBacks}/>
+                <SideBar loadSensorDevices={loadSensorDevices} openCreateDevice={openDialog} setRefreshCallbacks={setRefreshCallBacks} />
             </OverlayDialog>
         </div>
     )

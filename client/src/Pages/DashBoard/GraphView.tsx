@@ -7,6 +7,8 @@ interface GraphViewPropType {
   deviceId: string,
   deviceName: string,
   loadSensorChart: MouseEventHandler,
+  setRefreshCallbacks: React.Dispatch<React.SetStateAction<Set<Function>>>
+  openDialog: Function
 }
 
 function GraphView(props: GraphViewPropType) {
@@ -26,7 +28,9 @@ function GraphView(props: GraphViewPropType) {
       <SensorInfo deviceId={props.deviceId}
         loadSensorChart={props.loadSensorChart}
         getAndSetData={getAndSetData}
-        notifyRealTime={notifyRealTime} />
+        notifyRealTime={notifyRealTime}
+        setRefreshCallbacks={props.setRefreshCallbacks} 
+        openDialog={props.openDialog}/>
     </div>
   )
 }
