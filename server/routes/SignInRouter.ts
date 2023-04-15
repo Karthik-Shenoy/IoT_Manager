@@ -9,6 +9,9 @@ const generateUID = () => {
     return UID;
 }
 
+const uri = "mongodb+srv://karthik:hello123@sensorflow.lirh05g.mongodb.net";
+const client = new MongoClient(uri);
+
 // Create an express app and use JSON middleware
 const SignInRouter = Router();
 SignInRouter.use(json());
@@ -27,10 +30,6 @@ SignInRouter.route('/')
     })
     .post((req, res, next) => {
         //karthik, JXwzckviqcEMehn0
-
-        const uri = "mongodb+srv://karthik:hello123@sensorflow.lirh05g.mongodb.net";
-        const client = new MongoClient(uri);
-
         let newUser = {
             email: req.body.email,
             password: req.body.password,
@@ -61,6 +60,31 @@ SignInRouter.route('/')
         res.end("Delete operation not supported on /resources ")
     });
 
+SignInRouter.route('/:userUID')
+    .all((req, res, next) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/plain');
+        next();
+    })
+    .get(async (req, res, next) => {
+        client.connect().then(async () => {
+            let retrievedUserDoc = await client.db("Users").collection("UserData").findOne({ UID: req.params.userUID });
+            if (retrievedUserDoc) {
+                res.end(JSON.stringify({
+                    name: retrievedUserDoc.name,
+                    emailId: retrievedUserDoc.email,
+                    found: true
+                }));
+            }
+            else {
+                res.end(JSON.stringify({
+                    name: "",
+                    emailId: "",
+                    found: false
+                }))
+            }
+        })
+    })
 
 
 export default SignInRouter;

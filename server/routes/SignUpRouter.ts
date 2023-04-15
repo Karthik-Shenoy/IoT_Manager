@@ -32,6 +32,7 @@ SignUpRouter.route('/')
         const client = new MongoClient(uri);
 
         let newUser = {
+            name: req.body.name,
             email: req.body.email,
             password: req.body.password,
             UID: generateUID()
@@ -39,7 +40,7 @@ SignUpRouter.route('/')
         client.connect().then(async () => {
             const existingUser = await client.db("Users").collection("UserData").findOne({email: newUser.email});
             if(!existingUser){
-                client.db("Users").collection("UserData").insertOne(newUser);
+                await client.db("Users").collection("UserData").insertOne(newUser);
                 console.log("success")
             }
             else{

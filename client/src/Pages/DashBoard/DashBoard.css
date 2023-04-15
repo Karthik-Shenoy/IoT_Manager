@@ -6,6 +6,14 @@
         opacity: 1;
     }
 }
+@keyframes animateDivGrow {
+    0% {
+        scale: 0;
+    }
+    100% {
+        scale: 1;
+    }
+}
 
 ::-webkit-calendar-picker-indicator {
     filter: invert(0.7);

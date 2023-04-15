@@ -58,7 +58,10 @@ function SideBar(props: SideBarPropType) {
       const responseVal = await response.json();
       const deviceLst = responseVal.devices;
       setRenderLst(deviceLst.map((device: any, index: any) => {
-        return (<SideBarCard clickHandler={props.loadSensorDevices} payload={device} key={device._id} type={1} />);
+        return (<SideBarCard clickHandler={props.loadSensorDevices}
+          payload={device}
+          key={device._id}
+          type={1} />);
       }))
       setIsLoading(false);
     }

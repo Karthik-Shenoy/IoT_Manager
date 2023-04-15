@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import './NavBar.css';
 import { Link, useLocation } from 'react-router-dom';
+import { UserContext } from '../../App';
 
 export default function NavBar() {
     let location = useLocation()
+    let {userUID} = useContext(UserContext);
     let colorScheme = location.pathname === "/" || location.pathname === "/auth" ? "bg-black" : "bg-gray-900";
     return (
         <>
@@ -14,7 +16,7 @@ export default function NavBar() {
                 <div className="nav-links flex items-center flex-col sm:flex-row">
                     <Link to="/" className="rounded-lg px-5 py-2 text-white mx-3 hover:bg-schn-600 hover:shadow-md transition duration-500 font-mono">Home</Link>
                     <Link to="/dashboard" className="rounded-lg px-5 py-2 text-white mx-3 hover:bg-schn-600 hover:shadow-md transition duration-500 font-mono">DashBoard</Link>
-                    <Link to="/devices" className="rounded-lg px-5 py-2 text-white mx-3 hover:bg-schn-600 hover:shadow-md transition duration-500 font-mono">Devices</Link>
+                    {userUID!== "" && <Link to="/profile" className="rounded-lg px-5 py-2 text-white mx-3 hover:bg-schn-600 hover:shadow-md transition duration-500 font-mono">Profile</Link>}
                 </div>
                 <div className="social-links flex mx-auto">
                     <a href="/" className="text-beige-800 mx-4 hover:text-beige-600">

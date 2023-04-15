@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import HomePage from './Pages/HomePage/HomePage';
 import DashBoard from './Pages/DashBoard/DashBoard';
 import Auth from './Pages/AuthPage/Auth';
-import Devices from './Pages/Devices/Devices';
+import ProfilePage from './Pages/Profile/ProfilePage';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 interface ContextType {
@@ -54,7 +54,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/devices" element={<Devices />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Routes>
         </BrowserRouter>
       </UserContext.Provider>

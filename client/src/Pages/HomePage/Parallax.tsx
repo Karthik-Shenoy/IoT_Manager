@@ -21,7 +21,7 @@ const Parallax = (props: ParallaxProps) => {
 
   return (
     <>
-    <div className="parallax h-screen max-w-[100%] bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${props.image})` }}>
+    <div className="parallax w-full h-screen max-w-[100%] bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${props.image})` }}>
       <div className="pt-20 sm:pt-40 pb-16 sm:pb-32">
         {props.children}
       </div>

@@ -3,6 +3,7 @@ import SideBar from './SideBar'
 import GraphView from './GraphView'
 import OverlayDialog from '../../Components/CreateDevice/OverlayDialog';
 import { UserContext } from '../../App';
+import { useNavigate } from 'react-router-dom';
 
 const NO_VALUE = "no_value"
 
@@ -11,9 +12,9 @@ function DashBoard() {
     let [deviceId, setDeviceId] = useState(NO_VALUE);
     let [deviceName, setDeviceName] = useState("");
     let [dialogType, setDialogType] = useState(0);
-    let { userUID, setUserUID } = useContext(UserContext);
+    let { userUID } = useContext(UserContext);
     let [refresCallbacks, setRefreshCallBacks] = useState<Set<Function>>(new Set<Function>());
-
+    const navigate = useNavigate()
 
     const loadSensorDevices = (event: React.MouseEvent) => {
         //event.stopPropagation();
@@ -31,8 +32,12 @@ function DashBoard() {
         setSensorId(newSensorId);
     }
     console.log(userUID)
-    if (userUID === "")
-        window.location.pathname = "/auth";
+
+    useEffect(() => {
+        if (userUID === "")
+            navigate("/auth");
+    }, [])
+
 
 
 
@@ -45,7 +50,7 @@ function DashBoard() {
         }, 800);
     }
     const refresh: Function = () => {
-        for(let callBack of refresCallbacks){
+        for (let callBack of refresCallbacks) {
             console.log(callBack)
             callBack();
         }
@@ -54,7 +59,7 @@ function DashBoard() {
         <div className="flex flex-row bg-gray-900 justify-center pt-10">
             <OverlayDialog dialogType={dialogType} closeDialog={closeDialog} refresh={refresh}>
                 <GraphView sensorId={sensorId}
-                    deviceName={deviceName} 
+                    deviceName={deviceName}
                     deviceId={deviceId}
                     loadSensorChart={loadSensorChart}
                     setRefreshCallbacks={setRefreshCallBacks}
