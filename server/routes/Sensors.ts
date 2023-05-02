@@ -30,7 +30,8 @@ const Resource = mongoose.model("resources", ResourceSchema);
 // Create an express app and use JSON middleware
 const sensorRouter = express.Router();
 sensorRouter.use(express.json());
-
+const uri = "mongodb+srv://karthik:hello123@sensorflow.lirh05g.mongodb.net";
+const client = new MongoClient(uri);
 
 sensorRouter.route("/:deviceId")
     .all((req, res, next) => {
@@ -39,8 +40,7 @@ sensorRouter.route("/:deviceId")
         next();
     })
     .get((req, res, next) => {
-        const uri = "mongodb+srv://karthik:hello123@sensorflow.lirh05g.mongodb.net";
-        const client = new MongoClient(uri);
+
         client.connect().then(async () => {
             const sensorDeviceCursor = client.db("Users").collection("SensorData").find({ deviceId: req.params.deviceId });
             const provisonedCursor = client.db("Users").collection("ProvisionedSensors").find({ deviceId: req.params.deviceId });
@@ -61,19 +61,39 @@ sensorRouter.route("/:deviceId")
             client.close();
         });
     }).post((req, res, next) => {
-        const uri = "mongodb+srv://karthik:hello123@sensorflow.lirh05g.mongodb.net";
-        const client = new MongoClient(uri);
         client.connect().then(() => {
             client.db("Users").collection("ProvisionedSensors").insertOne({
                 deviceId: req.params.deviceId,
                 sensorId: req.body.sensorId
-            }).then((result)=>{
+            }).then((result) => {
                 res.status(200);
                 res.send(JSON.stringify({
                     log: result,
                 }));
-            }).then(()=>{
+            }).then(() => {
                 console.log("/sensor/deviceid sensor provisoned ; ");
+                client.close();
+            })
+        });
+    });
+
+sensorRouter.route("/:deviceId")
+    .all((req, res, next) => {
+        res.status(200);
+        res.setHeader('Content-Type', 'application/json');
+        next();
+    }).delete((req, res, next) => {
+        client.connect().then(() => {
+            client.db("Users").collection("ProvisionedSensors").deleteOne({
+                deviceId: req.params.deviceId,
+                sensorId: req.body.sensorId
+            }).then((result) => {
+                res.status(200);
+                res.send(JSON.stringify({
+                    log: result,
+                }));
+            }).then(() => {
+                console.log("/sensor/deviceid sensor deleted; ");
                 client.close();
             })
         });

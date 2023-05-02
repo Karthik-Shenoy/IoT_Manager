@@ -14,6 +14,20 @@
         scale: 1;
     }
 }
+@keyframes animateDivShrink {
+    0% {
+        scale: 1;
+    }
+    100% {
+        scale: 0;
+    }
+}
+.animate-in-grow {
+    animation: animateDivGrow 0.5s ease-in-out forwards;
+}
+.animate-out-shrink {
+    animation: animateDivShrink 0.5s ease-in-out;
+}
 
 ::-webkit-calendar-picker-indicator {
     filter: invert(0.7);

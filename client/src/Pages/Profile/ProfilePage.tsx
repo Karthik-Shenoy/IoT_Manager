@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import ProfileSection from "./ProfileSection";
 import ManageSection from "./ManageSection";
 import { UserContext } from "../../App";
@@ -8,6 +8,17 @@ interface UserData {
     emailId: string,
     found: boolean,
 }
+
+interface ProfileContextType {
+    reRender: boolean,
+    setReRender: (reRender: boolean) => void
+}
+
+export const ProfileContext = createContext<ProfileContextType>({
+    reRender: false,
+    setReRender: () => { }
+})
+
 const ProfilePage = () => {
     let { userUID } = useContext((UserContext));
     let [currentUser, setCurrentUser] = useState<UserData>({
@@ -17,14 +28,8 @@ const ProfilePage = () => {
     })
     let [isLoading, setIsLoading] = useState<boolean>(false);
     let [devices, setDevices] = useState<any[]>([]);
-    // const devices = [
-    //     { deviceId: "1", deviceName: "Device 1", sensors: [{ value: 1 }] },
-    //     { deviceId: "2", deviceName: "Device 2", sensors: [] },
-    //     { deviceId: "3", deviceName: "Device 3", sensors: [] },
-    //     { deviceId: "4", deviceName: "Device 1", sensors: [] },
-    //     { deviceId: "5", deviceName: "Device 2", sensors: [] },
-    //     { deviceId: "6", deviceName: "Device 3", sensors: [] },
-    // ];
+    let [reRender, setReRender] = useState<boolean>(false);
+
     useEffect(() => {
         const getData = async () => {
             setIsLoading(true);
@@ -50,7 +55,7 @@ const ProfilePage = () => {
                     }
                     let sensorList = [];
                     for (let [key, value] of sensorMap) {
-                        if(provisonedSensors.has(key))
+                        if (provisonedSensors.has(key))
                             sensorList.push(value);
                     }
                     console.log(sensorList)
@@ -61,15 +66,16 @@ const ProfilePage = () => {
             setIsLoading(false);
         }
         getData();
-    }, [userUID])
+    }, [userUID, reRender])
     return (
         <div className="flex flex-row bg-gray-900 justify-center h-full min-h-screen">
             {/* Sidebar */}
-            <ProfileSection isLoading={isLoading} name={currentUser.name} emailId={currentUser.emailId} devices={devices} />
+            <ProfileContext.Provider value={{reRender, setReRender}}>
+                <ProfileSection isLoading={isLoading} name={currentUser.name} emailId={currentUser.emailId} devices={devices} />
 
-            {/* Manage Edge Devices */}
-            <ManageSection isLoading={isLoading} devices={devices} />
-
+                {/* Manage Edge Devices */}
+                <ManageSection isLoading={isLoading} devices={devices} />
+            </ProfileContext.Provider>
 
         </div>
     );

@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from 'react'
+import React, { HtmlHTMLAttributes, MouseEventHandler } from 'react'
 import ManageCard from './ManageCard'
 import Loader from '../../Components/Loader/Loader'
 
@@ -9,6 +9,12 @@ interface ManageDevicesPropTypes {
 }
 
 function ManageDevices(props: ManageDevicesPropTypes) {
+
+    const deleteHandler = (event: React.MouseEvent) => {
+        let element = event.target as HTMLButtonElement;
+        console.log(element.id);
+    }
+
     return (
         <>
             <div className="flex flex-col w-full bg-gray-900 pt-10 items-center">
@@ -22,7 +28,7 @@ function ManageDevices(props: ManageDevicesPropTypes) {
                             {
                                 props.devices.map((value, index) => {
                                     return (
-                                        <ManageCard clickHandler={props.clickHandler} deleteHandler={() => { }} payload={value} type={1} />
+                                        <ManageCard clickHandler={props.clickHandler} deleteHandler={deleteHandler} payload={value} type={1} />
                                     )
                                 })
                             }

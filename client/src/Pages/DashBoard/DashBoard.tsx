@@ -56,7 +56,7 @@ function DashBoard() {
         }
     }
     return (
-        <div className="flex flex-row bg-gray-900 justify-center pt-10">
+        <div className="flex flex-row bg-gray-900 justify-center pt-10 max-[700px]:px-[20px]">
             <OverlayDialog dialogType={dialogType} closeDialog={closeDialog} refresh={refresh}>
                 <GraphView sensorId={sensorId}
                     deviceName={deviceName}

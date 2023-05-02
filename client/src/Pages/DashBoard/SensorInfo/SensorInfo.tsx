@@ -75,7 +75,7 @@ function SensorInfo(props: SensorInfoPropType) {
       return prevState;
     })
 
-    
+
   }, [])
 
   useEffect(() => {
@@ -112,7 +112,7 @@ function SensorInfo(props: SensorInfoPropType) {
           latestValue.isProvisioned = true;
           cardClickHandler = props.loadSensorChart;
         }
-        tempLst.push(<SideBarCard clickHandler={cardClickHandler} payload={latestValue} key={key} type={2}/>);
+        tempLst.push(<SideBarCard clickHandler={cardClickHandler} payload={latestValue} key={key} type={2} />);
       }
       setRenderLst(tempLst);
       props.getAndSetData(readings);
@@ -163,11 +163,13 @@ function SensorInfo(props: SensorInfoPropType) {
           >Real-Time</label>
         </div>
       </div>
-      {<Loader show={isLoading} />}
-      {!isLoading ?
-        <div className="cta-sensor-div flex flex-row space-x-3 overflow-x-auto self-center bg-gray-700 w-full p-1">
-          {renderLst.length > 0 ? renderLst : <SideBarCard clickHandler={props.loadSensorChart} key={"placeHolder"} payload={{}} type={3}/>}
-        </div> : <></>
+      { }
+      {
+        isLoading ?
+          <Loader show={isLoading} /> :
+          <div className="cta-sensor-div flex flex-row space-x-3 overflow-x-auto self-center bg-gray-700 w-full p-1">
+            {renderLst.length > 0 ? renderLst : <SideBarCard clickHandler={props.loadSensorChart} key={"placeHolder"} payload={{}} type={3} />}
+          </div>
       }
     </div>
 

@@ -15,12 +15,21 @@ enum AuthError {
 
 const Auth = () => {
   const [isSignin, setIsSignin] = useState(true);
+  const [increaseSize, setIncreaseSize] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
   let [passwordNotif, setPasswordNotif] = useState("");
   const { userUID, setUserUID } = useContext(UserContext);
   let naviagte = useNavigate();
   const handleSwitch = () => {
-    setIsSignin(!isSignin);
+    if (isSignin) {
+      setIncreaseSize(!increaseSize);
+      setTimeout(() => setIsSignin(!isSignin), 1000);
+    }
+    else {
+      setIsSignin(!isSignin);
+      setIncreaseSize(!increaseSize);
+    }
+
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -102,10 +111,10 @@ const Auth = () => {
   }
 
   return (
-    <div className="flex font-mono items-center justify-center h-screen bg-black">
+    <div className="flex font-mono md:items-center justify-center h-screen bg-black p-10">
       {
         isLoading ? <Loader show={isLoading} /> :
-          <form onSubmit={handleSubmit} className={`w-full ${isSignin ? "max-w-[600px]" : "max-w-[700px]"} bg-black border-2 border-schn-600 rounded-lg transition-all duration-1000 ease-in`} action="/dashboard" >
+          <form onSubmit={handleSubmit} className={`w-full ${increaseSize ? "max-w-[700px] h-[576px]" : "max-w-[600px] h-[400px]"} bg-black border-2 border-schn-600 rounded-lg transition-all duration-1000 ease-in `} action="/dashboard" >
             <div className="flex flex-row">
               <div className="px-8 py-6">
                 <h2 className="text-white border-2 border-schn-500 p-1 rounded-lg font-bold text-2xl text-center mb-6">Sign{isSignin ? <b className="text-schn-500">In</b> : <b className="text-schn-500">Up</b>}</h2>
@@ -186,7 +195,7 @@ const Auth = () => {
                   </button>
                 </div>
               </div>
-              <img src="../../../public/logo.jpg" className="w-6/12 rounded-lg ml-auto" />
+              <img src="../../../public/logo.jpg" className={`w-6/12 ${increaseSize? "h-[576px]":"h-[400px]"} rounded-lg ml-auto max-[780px]:hidden transition-all duration-1000 ease-in`} />
             </div>
           </form>
       }

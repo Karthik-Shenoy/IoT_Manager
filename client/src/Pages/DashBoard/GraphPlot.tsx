@@ -129,10 +129,10 @@ function GraphPlot(props: GraphPropType) {
     //props.sensorId, props.deviceName, props.data
     return (
         <div ref={mainDivRef} className="w-11/12 bg-gray-700 text-white  self-center  shadow-lg rounded-lg p-8 flex flex-col items-center">
-            <div className="flex felx-row text-white text-lg font-bold font-mono mb-5">
+            <div className="items-center flex max-[700px]:flex-col  text-white text-lg font-bold font-mono mb-5 gap-4 flex-row">
                 <p id="devicePrompt" className={`p-3 ${props.deviceName === "" ? "text-red-400" : "text-schn-500"} rounded-lg bg-gray-800 shadow-lg max-w-[350px] text-sm`}>{props.deviceName !== "" ? `Edge Device: ${props.deviceName}` : "Please choose a device from the Edge-Device list"} </p>
-                <p id="sensorPrompt" className={`ml-5 p-3 ${props.sensorId === "no_value" ? "text-red-400" : "text-schn-500"} rounded-lg bg-gray-800 shadow-lg max-w-[350px] text-sm`}>{props.sensorId === "no_value" ? "Please choose a sensor from the sensor list" : `Sensor: ${props.sensorId}`}</p>
-                <p className='self-center text-md ml-5 mr-2'>Date:</p>
+                <p id="sensorPrompt" className={`p-3 ${props.sensorId === "no_value" ? "text-red-400" : "text-schn-500"} rounded-lg bg-gray-800 shadow-lg max-w-[350px] text-sm`}>{props.sensorId === "no_value" ? "Please choose a sensor from the sensor list" : `Sensor: ${props.sensorId}`}</p>
+                <p className='self-center text-md mr-2'>Date:</p>
                 <input type="date"
                     id="datePicker"
                     className={`appearance-none border-2 ${(props.deviceName === "" || props.sensorId === "no_value") ? "border-red-400" : "border-schn-500"} text-gray-500 bg-gray-800 rounded-lg text-center outline-none hover:scale-[1.1] transition duration-1000 self-center p-2 text-sm`}
@@ -140,8 +140,6 @@ function GraphPlot(props: GraphPropType) {
                     min={dateRange.min}
                     max={dateRange.max}
                     onChange={dateChangeListener} />
-
-
             </div>
 
 

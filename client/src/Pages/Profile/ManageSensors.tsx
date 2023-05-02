@@ -10,6 +10,12 @@ interface ManageSensorsPropTypes {
 function ManageSensors(props: ManageSensorsPropTypes) {
     const divRef = useRef<HTMLDivElement>(null);
     //for animations
+
+    const deleteHandler = (event: React.MouseEvent) => {
+        let element = event.target as HTMLButtonElement;
+        console.log(element.id);
+    }
+
     useEffect(() => {
         let divElement = divRef.current as HTMLDivElement
         if (!divElement)
@@ -38,7 +44,7 @@ function ManageSensors(props: ManageSensorsPropTypes) {
                                     props.sensors.length === 0 ? <ManageCard clickHandler={() => { }} deleteHandler={() => { }} payload={null} type={3} /> :
                                         props.sensors.map((value, index) => {
                                             return (
-                                                <ManageCard clickHandler={() => { }} deleteHandler={() => { }} payload={value} type={2} />
+                                                <ManageCard clickHandler={() => { }} deleteHandler={deleteHandler} payload={value} type={2} />
                                             )
                                         })
                                 )

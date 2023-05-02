@@ -25,7 +25,7 @@ function ManageCard(props: ManageCardPropType) {
           <div className="flex flex-col min-[1360px]:flex-row w-full">
             <img src="../../../public/sensor1.png" alt="Sensor icon" className={`mr-2 w-1/6 h-1/6 self-center min-[1360px]:self-start`} />
             <p className="mx-3 self-center text-md font-medium">{payload.sensorId ? payload.sensorId : "SENSOR_XXX"}</p>
-            <div className="w-1/3 bg-red-400 rounded-md py-1 text-white justify-center flex place-self-center justify-self-end cursor-pointer hover:bg-red-700" onClick={props.clickHandler} id={payload.sensorId}>Remove</div>
+            <div className="w-1/3 bg-red-400 rounded-md py-1 text-white justify-center flex place-self-center justify-self-end cursor-pointer hover:bg-red-700" onClick={props.deleteHandler} id={payload.sensorId}>Remove</div>
           </div>
           <p className="text-md mt-2">Last Reading: {payload.temperature}°C</p>
         </div>
