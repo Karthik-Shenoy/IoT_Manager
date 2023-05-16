@@ -24,14 +24,19 @@ function ManageDevices(props: ManageDevicesPropTypes) {
                         <p className="text-white font-bold text-lg px-5 w-full py-2 shadow-lg bg-gray-800 rounded-lg">Manage Edge devices</p>
                     </div>
                     {props.isLoading ? <div className="justify-self-center"><Loader show={props.isLoading} /></div> :
-                        <div className="cta-sensor-div flex flex-row space-x-3 overflow-x-auto self-center bg-gray-700 w-full p-1">
+                        <div className="cta-sensor-div flex flex-row space-x-3 overflow-x-auto self-center bg-gray-700 w-full h-full items-center p-1">
                             {
                                 props.devices.map((value, index) => {
                                     return (
-                                        <ManageCard clickHandler={props.clickHandler} deleteHandler={deleteHandler} payload={value} type={1} />
+                                        <ManageCard clickHandler={props.clickHandler} deleteHandler={() => { }} payload={value} type={1} />
                                     )
                                 })
                             }
+                            {
+                        (props.devices.length == 0) && <div className="max-h-[70px] max-w-[250px] bg-gray-800 rounded-lg shadow-lg p-5">
+                        <p className="text-xl text-red-400"> No Edge Devices </p>
+                    </div> 
+                    }
                         </div>
                     }
                 </div>

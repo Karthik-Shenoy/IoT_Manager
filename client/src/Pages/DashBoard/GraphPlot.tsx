@@ -1,45 +1,47 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { AreaChart, Area, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import readings from './pdata';
 import { TooltipProps } from 'recharts/types/component/Tooltip';
 import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 import "./DashBoard.css"
+import { emptyValues } from '../../../../utils';
 
 interface reading {
     sensorId: string,
     time: string,
-    DO: Number,
-    pH: Number,
+    metaData: string,
+    data: Number,
     date: string
 }
 
-
-
-function CustomTooltip(props: TooltipProps<ValueType, NameType>) {
-    let payload = props.payload ? (props.payload[0] ? props.payload[0].payload : null) : null;
-    if (props.active) {
-        return (
-            <div className="p-3 rounded-lg bg-black text-white shadow-lg font-mono font-bold">
-                <p className="intro">{`Time : ${payload ? payload.time.toString().slice(0, 6) : ""}`}</p>
-                <p className="label">{`pH : ${payload ? payload.pH : ""}`}</p>
-            </div>
-        );
-    }
-
-    return null;
-}
 
 interface GraphPropType {
     sensorId: string,
     deviceName: string,
     realTimeFlag: boolean,
-    data: reading[]
+    data: Map<string, reading[]> | undefined
 }
 
 interface DateRange {
     min: string,
     max: string
 }
+
+function CustomTooltip(props: TooltipProps<ValueType, NameType>) {
+    let payload:reading | null = props.payload ? (props.payload[0] ? props.payload[0].payload : null) : null;
+    if (props.active) {
+        if(!payload)
+            return (<></>)
+
+        return (
+            <div className="p-3 rounded-lg bg-gray-900 text-white shadow-lg font-mono font-bold">
+                <p className="intro">{`Time : ${payload ? payload.time : ""}`}</p>
+                <p className="label">{`${payload.metaData} : ${payload ? payload.data : ""}`}</p>
+            </div>
+        );
+    }
+    return null;
+}
+
 
 function getDateInFormat(date: string, complement: boolean) {
     if (!complement) {
@@ -55,7 +57,7 @@ function getDateInFormat(date: string, complement: boolean) {
 }
 
 function GraphPlot(props: GraphPropType) {
-    let [data, setData] = useState<reading[]>([]);
+    let [filteredData, setFilteredData] = useState<reading[]>([]);
     let [dateRange, setDateRange] = useState({ min: '', max: '' })
     let [plotDate, setPlotDate] = useState("")
     let mainDivRef = useRef<HTMLDivElement>(null);
@@ -65,23 +67,39 @@ function GraphPlot(props: GraphPropType) {
         setPlotDate(getDateInFormat(datePicker.value, true))
     }
 
+    // use effect for animations
+    useEffect(() => {
+        let divElement = mainDivRef.current as HTMLDivElement;
+        let devicePrompt = divElement.querySelector("#devicePrompt") as HTMLElement;
+        let sensorPrompt = divElement.querySelector("#sensorPrompt") as HTMLElement;
+        let choiceImage = divElement.querySelector("#choiceImage") as HTMLElement;
+    }, []);
+
+    // default behaviour
+
     useEffect(() => {
         let divElement = mainDivRef.current as HTMLDivElement;
         let devicePrompt = divElement.querySelector("#devicePrompt") as HTMLElement;
         let sensorPrompt = divElement.querySelector("#sensorPrompt") as HTMLElement;
         let choiceImage = divElement.querySelector("#choiceImage") as HTMLElement;
         let datePicker = divElement.querySelector("#datePicker") as HTMLInputElement;
-        console.log("value: ", props.sensorId)
+        
         let data: reading[] = [];
-        if (props.data.length > 0) {
+        if(props.data){
+            let sensorReadings = props.data.get(props.sensorId)
+            if(sensorReadings){
+                data = sensorReadings;
+            }
+        }
+    
+        if (data.length > 0) {
             setDateRange({
-                min: getDateInFormat(props.data[0].date, false),
-                max: getDateInFormat(props.data[props.data.length - 1].date, false)
-            })
+                min: getDateInFormat(data[0].date, false),
+                max: getDateInFormat(data[data.length - 1].date, false)
+            });
             setPlotDate(getDateInFormat(dateRange.min, true));
             if (datePicker.value === "") {
                 datePicker.value = dateRange.min;
-                
             }
             else{
                 setPlotDate(getDateInFormat(datePicker.value, true));
@@ -93,14 +111,16 @@ function GraphPlot(props: GraphPropType) {
                 setPlotDate(getDateInFormat(dateRange.max, true));
             }
         }
-        for (let value of props.data) {
+        let filteredData: reading[] = []; 
+        for (let value of data) {
             if ((value.sensorId !== props.sensorId) || (plotDate !== value.date.slice(1)))
                 continue;
-            value.time = value.time.slice(0, 6);
-            data.push(value);
+            //value.time = value.time.slice(0, 6);
+            filteredData.push(value);
         }
+        
 
-        setData(data);
+        setFilteredData(filteredData);
         devicePrompt.style.animationName = "animateBoxGrow";
         devicePrompt.style.animationDuration = "1s";
         devicePrompt.style.animationTimingFunction = "ease-in-out";
@@ -127,11 +147,16 @@ function GraphPlot(props: GraphPropType) {
 
     }, [props, plotDate]);
     //props.sensorId, props.deviceName, props.data
+
+    function renderLabel(entry: reading){
+        return entry.metaData;
+    }
+
     return (
         <div ref={mainDivRef} className="w-11/12 bg-gray-700 text-white  self-center  shadow-lg rounded-lg p-8 flex flex-col items-center">
             <div className="items-center flex max-[700px]:flex-col  text-white text-lg font-bold font-mono mb-5 gap-4 flex-row">
-                <p id="devicePrompt" className={`p-3 ${props.deviceName === "" ? "text-red-400" : "text-schn-500"} rounded-lg bg-gray-800 shadow-lg max-w-[350px] text-sm`}>{props.deviceName !== "" ? `Edge Device: ${props.deviceName}` : "Please choose a device from the Edge-Device list"} </p>
-                <p id="sensorPrompt" className={`p-3 ${props.sensorId === "no_value" ? "text-red-400" : "text-schn-500"} rounded-lg bg-gray-800 shadow-lg max-w-[350px] text-sm`}>{props.sensorId === "no_value" ? "Please choose a sensor from the sensor list" : `Sensor: ${props.sensorId}`}</p>
+                <p id="devicePrompt" className={`p-3 ${props.deviceName === "" ? "text-red-400" : "text-schn-500"} rounded-lg bg-gray-800 shadow-lg max-w-[350px] text-sm`}>{props.deviceName === emptyValues.STRING  ?  "Please choose a device from the Edge-Device list" : `Edge Device: ${props.deviceName}`} </p>
+                <p id="sensorPrompt" className={`p-3 ${props.sensorId === "no_value" ? "text-red-400" : "text-schn-500"} rounded-lg bg-gray-800 shadow-lg max-w-[350px] text-sm`}>{props.sensorId === emptyValues.STRING ? "Please choose a sensor from the sensor list" : `Sensor: ${props.sensorId}`}</p>
                 <p className='self-center text-md mr-2'>Date:</p>
                 <input type="date"
                     id="datePicker"
@@ -147,10 +172,10 @@ function GraphPlot(props: GraphPropType) {
                 {
                     (props.sensorId !== "no_value" && props.deviceName !== "") ?
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart width={800} height={500} data={data} margin={{ top: 15, right: 20, bottom: 5, left: 0 }}>
-                                <Area type="monotone" dataKey="pH" stroke="#008000" fill="#008000" strokeWidth={3} />
+                            <AreaChart width={800} height={500} data={filteredData} margin={{ top: 15, right: 20, bottom: 5, left: 0 }}>
+                                <Area type="monotone"  dataKey="data" label={renderLabel} stroke="#008000" fill="#008000" strokeWidth={3} />
                                 <CartesianGrid stroke="#FFFFFF" strokeDasharray="1 1" strokeOpacity={0.2} />
-                                <XAxis dataKey="time" stroke="#FFFFFF" />
+                                <XAxis dataKey="time" tickFormatter={(value:string) => value.slice(0, 6)} stroke="#FFFFFF" />
                                 <YAxis stroke="#FFFFFF" />
                                 <Tooltip content={<CustomTooltip />} />
                                 <Legend />

@@ -30,12 +30,16 @@ const ProfilePage = () => {
     let [devices, setDevices] = useState<any[]>([]);
     let [reRender, setReRender] = useState<boolean>(false);
 
+    const reloadPage = () => {
+        setReRender(!reRender);
+    }
+
     useEffect(() => {
         const getData = async () => {
             setIsLoading(true);
             let response = await fetch(`/data/signin/${userUID}`);
             const currentUserData: UserData = await response.json();
-            response = await fetch(`/data/createResource/${userUID}`);
+            response = await fetch(`/data/edgeDevices/${userUID}`);
             const deviceData = await response.json();
 
             //console.log(deviceData)
@@ -74,7 +78,7 @@ const ProfilePage = () => {
                 <ProfileSection isLoading={isLoading} name={currentUser.name} emailId={currentUser.emailId} devices={devices} />
 
                 {/* Manage Edge Devices */}
-                <ManageSection isLoading={isLoading} devices={devices} />
+                <ManageSection isLoading={isLoading} devices={devices} reloadPage={reloadPage}/>
             </ProfileContext.Provider>
 
         </div>

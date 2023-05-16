@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 interface ManageSectionPropType{
     devices: any[];
     isLoading: boolean;
+    reloadPage: Function;
 }
 
 function ManageSection(props: ManageSectionPropType) {
@@ -17,10 +18,9 @@ function ManageSection(props: ManageSectionPropType) {
     useEffect(()=>{
         if(userUID === "")
             navigate("/auth");
-        const response = fetch("/");
     }, [])
 
-
+    console.log("manage section reload function:", typeof(props.reloadPage))
     const clickHandler = (event: React.MouseEvent) => {
         let buttonElement = event.target as HTMLButtonElement;
         let deviceId = buttonElement.id;
@@ -37,7 +37,7 @@ function ManageSection(props: ManageSectionPropType) {
                 <ManageDevices isLoading={props.isLoading} devices={props.devices} clickHandler={clickHandler} />
 
                 {/* Sensor Device details */}
-                <ManageSensors isLoading={props.isLoading} sensors={selsectedSensors} />
+                <ManageSensors isLoading={props.isLoading} sensors={selsectedSensors} reloadPage={props.reloadPage}/>
             </div>
         </>
     )

@@ -10,6 +10,10 @@ interface SideBarPropType {
   setRefreshCallbacks: React.Dispatch<React.SetStateAction<Set<Function>>>
 }
 
+interface EdgeDevice {
+
+}
+
 function SideBar(props: SideBarPropType) {
   // fetch device data and render components
   let nodeRef = useRef<HTMLButtonElement>(null);
@@ -48,7 +52,7 @@ function SideBar(props: SideBarPropType) {
   useEffect(() => {
     const getData = async () => {
       setIsLoading(true);
-      const response = await fetch(`/data/createResource/${userUID}`, {
+      const response = await fetch(`/data/edgeDevices/${userUID}`, {
         method: "GET",
         headers: {
           "Accept": "application/json",
@@ -57,6 +61,7 @@ function SideBar(props: SideBarPropType) {
       });
       const responseVal = await response.json();
       const deviceLst = responseVal.devices;
+      
       setRenderLst(deviceLst.map((device: any, index: any) => {
         return (<SideBarCard clickHandler={props.loadSensorDevices}
           payload={device}

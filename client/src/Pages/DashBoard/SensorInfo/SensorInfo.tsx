@@ -33,17 +33,17 @@ function SensorInfo(props: SensorInfoPropType) {
 
   const realTimeSwitchHandler = (event: ChangeEvent) => {
     const newValue = !realTimeFlagRef.current;
-    console.log(newValue);
     setRealTimeFlag(newValue);
     realTimeFlagRef.current = newValue;
     props.notifyRealTime(newValue);
+    console.log("realTimeFlag : ", realTimeFlagRef.current)
   }
 
 
   const provisonSensorDevice: MouseEventHandler = (event: React.MouseEvent) => {
     let provisonButton = event.target as HTMLButtonElement;
     const sensorId = provisonButton.id;
-    console.log("provisoned")
+    
     const addSensorToProvisonedLst = async () => {
       const response = await fetch(`/data/sensors/${props.deviceId}`, {
         method: "POST",
@@ -83,15 +83,18 @@ function SensorInfo(props: SensorInfoPropType) {
       if (!realTimeFlagRef.current) {
         setIsLoading(true)
       }
-      let sensorsPromiseResponse = await fetch(`/data/sensors/${props.deviceId}`);
-      let response = await sensorsPromiseResponse.json();
-      //console.log("response : ", response);
-      let readings = response.devices;
 
-      let provisonedSensors = new Set(response.provisonedSensors.map((value: any) => {
+      let sensorsPromiseResponse = await fetch(`/data/sensors/${props.deviceId}`);
+      let sensorsListResponse = await sensorsPromiseResponse.json();
+      
+      let readings = sensorsListResponse.devices;
+      
+
+      let provisonedSensors = new Set(sensorsListResponse.provisonedSensors.map((value: any) => {
         return value.sensorId;
       }));
 
+      //compartmentalize sensors according to sensorId
       for (let reading of readings) {
         let index = reading.sensorId;
         let oldList = devices.get(index);
@@ -101,6 +104,7 @@ function SensorInfo(props: SensorInfoPropType) {
           oldList.push(reading);
         devices.set(index, oldList);
       }
+      props.getAndSetData(devices);
 
       let tempLst: JSX.Element[] = [];
       for (let [key, value] of devices) {
@@ -115,20 +119,19 @@ function SensorInfo(props: SensorInfoPropType) {
         tempLst.push(<SideBarCard clickHandler={cardClickHandler} payload={latestValue} key={key} type={2} />);
       }
       setRenderLst(tempLst);
-      props.getAndSetData(readings);
+      
       setIsLoading(false);
     }
     loadData();
 
     if (webSocket && INIT_SOCKET) {
-      console.log("on message initialized")
+      console.log("webSocket onMessage initialized")
 
       webSocket.onmessage = (event: MessageEvent<any>) => {
-        let dataBaseEventObject = JSON.parse(event.data);
-
-        console.log(dataBaseEventObject);
+        //let dataBaseEventObject = JSON.parse(event.data);
+        
         if (realTimeFlagRef.current) {
-          console.log("IN");
+          console.log("webSocket Message Recieved");
           const newValue = !(reRenderRef.current)
           setReRender(newValue);
           reRenderRef.current = newValue;

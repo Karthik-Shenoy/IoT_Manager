@@ -1,4 +1,8 @@
-enum AuthError {
+export enum emptyValues {
+    STRING = "no_value",
+}
+
+export enum AuthError {
     // all the signup errors have error code 1X
     UserAlreadyExists = 10,
     // all the signin errors have error code 2X
@@ -6,4 +10,4 @@ enum AuthError {
     WrongPassword = 21
 }
 
-export default  AuthError;
+

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Loader from '../../Components/Loader/Loader';
 import SignInComponent from './SignInComponent';
 import SignUpComponent from './SignUpComponent';
-import AuthError from '../../../../utils';
+import {AuthError} from '../../../../utils';
 
 
 

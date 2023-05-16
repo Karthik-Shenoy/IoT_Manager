@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ManageCard from './ManageCard'
 import Loader from '../../Components/Loader/Loader';
 
 interface ManageSensorsPropTypes {
     sensors: any[] | null,
-    isLoading:boolean
+    isLoading: boolean
+    reloadPage: Function;
 }
 
 function ManageSensors(props: ManageSensorsPropTypes) {
@@ -12,8 +13,28 @@ function ManageSensors(props: ManageSensorsPropTypes) {
     //for animations
 
     const deleteHandler = (event: React.MouseEvent) => {
-        let element = event.target as HTMLButtonElement;
-        console.log(element.id);
+        let sensorCardButton = event.target as HTMLButtonElement;
+        let sensorIdData = sensorCardButton.id;
+        let [sensorId, deviceId] = sensorIdData.split(":");
+
+        const deleteSensor = async () => {
+            let response = await fetch(`/data/sensors/${deviceId}`, {
+                method: "DELETE",
+                body: JSON.stringify({
+                    'sensorId': sensorId
+                }),
+                headers: {
+                    "Accept": "application/json",
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            })
+            response = await response.json();
+            console.log(typeof(props.reloadPage()));
+            console.log(response)
+        }
+
+        deleteSensor();
+
     }
 
     useEffect(() => {
@@ -38,7 +59,7 @@ function ManageSensors(props: ManageSensorsPropTypes) {
                         <p className="text-white font-bold text-lg px-5 w-full py-2 shadow-lg bg-gray-800 rounded-lg">Manage Sensors</p>
                     </div>
                     {props.isLoading ? <div className="justify-self-center"><Loader show={props.isLoading} /></div> :
-                        <div ref={divRef} className="cta-sensor-div flex flex-row space-x-3 overflow-x-auto self-center bg-gray-700 w-full p-1">
+                        <div ref={divRef} className="cta-sensor-div flex flex-row space-x-3 overflow-x-auto self-center items-center bg-gray-700 w-full h-full p-1">
                             {
                                 props.sensors && (
                                     props.sensors.length === 0 ? <ManageCard clickHandler={() => { }} deleteHandler={() => { }} payload={null} type={3} /> :
@@ -50,7 +71,7 @@ function ManageSensors(props: ManageSensorsPropTypes) {
                                 )
                             }
                             {
-                                !(props.sensors) && <div className="bg-gray-800 rounded-lg shadow-lg p-5">
+                                !(props.sensors) && <div className="max-h-[70px] bg-gray-800 rounded-lg shadow-lg p-5">
                                     <p className="text-xl text-red-400"> Chooses an edge device</p>
                                 </div>
                             }

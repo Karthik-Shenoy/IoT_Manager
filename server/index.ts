@@ -2,8 +2,8 @@ import express from 'express';
 import iothub from 'azure-iothub';
 import SignUpRouter from './routes/SignUpRouter';
 import SignInRouter from './routes/SignInRouter';
-import CreateResourceRouter from './routes/CreateResourceRouter';
-import sensorRouter from './routes/Sensors';
+import EdgeDeviceRouter from './routes/EdgeDeviceRouter';
+import sensorRouter from './routes/SensorRouter';
 import webSocket from 'ws';
 import http from "http";
 import { ChangeStreamDocument, MongoClient } from 'mongodb';
@@ -24,7 +24,7 @@ const server = http.createServer(app);
 // Handling '/' Request
 app.use("/signup", SignUpRouter);
 app.use("/signin", SignInRouter);
-app.use("/createResource", CreateResourceRouter);
+app.use("/edgeDevices", EdgeDeviceRouter);
 app.use("/sensors", sensorRouter);
 
 app.get('/', (req, res) => {

@@ -1,37 +1,43 @@
 import React, { MouseEventHandler, useContext, useEffect, useRef, useState } from 'react'
 import SideBar from './SideBar'
-import GraphView from './GraphView'
+import CenterView from './CenterView'
 import OverlayDialog from '../../Components/CreateDevice/OverlayDialog';
 import { UserContext } from '../../App';
 import { useNavigate } from 'react-router-dom';
+import { emptyValues } from '../../../../utils'
+import { CenterViewContextType } from './DashBoardTypes';
 
-const NO_VALUE = "no_value"
 
 function DashBoard() {
-    let [sensorId, setSensorId] = useState(NO_VALUE);
-    let [deviceId, setDeviceId] = useState(NO_VALUE);
-    let [deviceName, setDeviceName] = useState("");
+    let [centerViewContext, setCenterViewContextType] = useState<CenterViewContextType>({
+        sensorId: emptyValues.STRING,
+        deviceId: emptyValues.STRING,
+        deviceName: emptyValues.STRING,
+    });
     let [dialogType, setDialogType] = useState(0);
     let { userUID } = useContext(UserContext);
     let [refresCallbacks, setRefreshCallBacks] = useState<Set<Function>>(new Set<Function>());
     const navigate = useNavigate()
 
-    const loadSensorDevices = (event: React.MouseEvent) => {
+    const setEdgeDevice = (event: React.MouseEvent) => {
         //event.stopPropagation();
         const clickEventTarget = event ? event.target : null;
         const clickedElement = clickEventTarget as HTMLButtonElement
-        let newDeviceId = clickedElement.id.split(":");
-        setDeviceId(newDeviceId[0]);
-        setDeviceName(newDeviceId[1]);
-        setSensorId(NO_VALUE);
+        let newDeviceData = clickedElement.id.split(":");
+        setCenterViewContextType({
+            deviceId: newDeviceData[0],
+            deviceName: newDeviceData[1],
+            sensorId: emptyValues.STRING
+        });
+
     }
-    const loadSensorChart = (event: React.MouseEvent) => {
+
+    const setSensorDevice = (event: React.MouseEvent) => {
         const clickEventTarget = event ? event.target : null;
         const clickedElement = clickEventTarget as HTMLButtonElement
-        let newSensorId = clickedElement.id;
-        setSensorId(newSensorId);
+        let newSensorId = clickedElement.id as string;
+        setCenterViewContextType({ ...centerViewContext, sensorId: newSensorId });
     }
-    console.log(userUID)
 
     useEffect(() => {
         if (userUID === "")
@@ -44,28 +50,29 @@ function DashBoard() {
     const openDialog: Function = (dialogType: number) => {
         setDialogType(dialogType)
     }
+    
     const closeDialog: Function = () => {
         setTimeout(() => {
             setDialogType(0);
         }, 800);
     }
+    
     const refresh: Function = () => {
         for (let callBack of refresCallbacks) {
-            console.log(callBack)
+            
             callBack();
         }
     }
     return (
         <div className="flex flex-row bg-gray-900 justify-center pt-10 max-[700px]:px-[20px]">
             <OverlayDialog dialogType={dialogType} closeDialog={closeDialog} refresh={refresh}>
-                <GraphView sensorId={sensorId}
-                    deviceName={deviceName}
-                    deviceId={deviceId}
-                    loadSensorChart={loadSensorChart}
+                <CenterView
+                    centerViewContext={centerViewContext}
+                    loadSensorChart={setSensorDevice}
                     setRefreshCallbacks={setRefreshCallBacks}
                     openDialog={openDialog}
                 />
-                <SideBar loadSensorDevices={loadSensorDevices} openCreateDevice={openDialog} setRefreshCallbacks={setRefreshCallBacks} />
+                <SideBar loadSensorDevices={setEdgeDevice} openCreateDevice={openDialog} setRefreshCallbacks={setRefreshCallBacks} />
             </OverlayDialog>
         </div>
     )

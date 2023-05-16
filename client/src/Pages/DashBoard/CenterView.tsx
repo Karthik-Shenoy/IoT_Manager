@@ -1,20 +1,19 @@
 import React, { MouseEventHandler, useEffect, useState } from 'react'
 import GraphPlot from './GraphPlot'
 import SensorInfo from './SensorInfo/SensorInfo'
+import { CenterViewContextType } from './DashBoardTypes'
 
-interface GraphViewPropType {
-  sensorId: string,
-  deviceId: string,
-  deviceName: string,
+interface CenterViewPropType {
   loadSensorChart: MouseEventHandler,
   setRefreshCallbacks: React.Dispatch<React.SetStateAction<Set<Function>>>
   openDialog: Function
+  centerViewContext: CenterViewContextType
 }
 
-function GraphView(props: GraphViewPropType) {
-  let [data, setData] = useState([]);
+function CenterView(props: CenterViewPropType) {
+  let [data, setData] = useState<Map<string, any>>();
   let [realTimeFlag, setRealTimeFlag] = useState(false);
-  let getAndSetData = (data: any) => {
+  let getAndSetData = (data: Map<string, any[]>) => {
     setData(data);
   }
 
@@ -24,8 +23,8 @@ function GraphView(props: GraphViewPropType) {
 
   return (
     <div className="w-9/12 max-[800px]:w-11/12 h-full flex flex-col justify-center ">
-      <GraphPlot sensorId={props.sensorId} deviceName={props.deviceName} data={data} realTimeFlag={realTimeFlag} />
-      <SensorInfo deviceId={props.deviceId}
+      <GraphPlot sensorId={props.centerViewContext.sensorId} deviceName={props.centerViewContext.deviceName} data={data} realTimeFlag={realTimeFlag} />
+      <SensorInfo deviceId={props.centerViewContext.deviceId}
         loadSensorChart={props.loadSensorChart}
         getAndSetData={getAndSetData}
         notifyRealTime={notifyRealTime}
@@ -35,4 +34,4 @@ function GraphView(props: GraphViewPropType) {
   )
 }
 
-export default GraphView
+export default CenterView

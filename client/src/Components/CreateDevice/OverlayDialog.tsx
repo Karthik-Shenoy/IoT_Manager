@@ -31,7 +31,7 @@ function OverlayDialog(props: DialogPropType) {
     console.log(userUID, deviceConnectionKeyInput.value);
     const fetchResource = async () => {
       setIsLoading(true);
-      const response = await fetch("/data/createResource", {
+      const response = await fetch("/data/edgeDevices/create", {
         method: "POST",
         headers: {
           "Accept": "application/json",

@@ -26,7 +26,7 @@ function SideBarCard(props: SideBarCardPropType) {
             <p className="mx-3 self-center text-md font-medium">{payload.sensorId ? payload.sensorId : "SENSOR_XXX"}</p>
             <div className="w-1/3 bg-schn-400 rounded-md py-1 text-white justify-center flex place-self-center justify-self-end cursor-pointer hover:bg-schn-700" onClick={props.clickHandler} id={payload.sensorId}>{props.payload.isProvisioned? "View":"Provison"}</div>
           </div>
-          <p className="text-md mt-2">Last Reading: {payload.temperature}°C</p>
+          <p className="text-md mt-2">Last Reading: {payload.data}</p>
         </div>
         <div className="flex justify-between">
           <p className={`text-sm ${props.payload.isProvisioned? "text-gray-400":"text-red-400"}`}>Time: {payload.time}</p>
