@@ -1,5 +1,6 @@
 export type CenterViewContextType = {
     sensorId: string,
     deviceId: string,
-    deviceName: string
+    deviceName: string,
+    reRender: boolean
 }

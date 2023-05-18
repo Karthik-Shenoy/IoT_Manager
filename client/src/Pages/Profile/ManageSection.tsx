@@ -3,9 +3,10 @@ import ManageDevices from './ManageDevices'
 import ManageSensors from './ManageSensors'
 import { UserContext } from '../../App';
 import { useNavigate } from 'react-router-dom';
+import { EdgeDevice } from './ProfilePageUtils';
 
 interface ManageSectionPropType{
-    devices: any[];
+    devices: EdgeDevice[];
     isLoading: boolean;
     reloadPage: Function;
 }
@@ -20,7 +21,11 @@ function ManageSection(props: ManageSectionPropType) {
             navigate("/auth");
     }, [])
 
-    console.log("manage section reload function:", typeof(props.reloadPage))
+    const reloadPage= () => {
+        props.reloadPage();
+        setSelectedSensors(null);
+    }
+
     const clickHandler = (event: React.MouseEvent) => {
         let buttonElement = event.target as HTMLButtonElement;
         let deviceId = buttonElement.id;
@@ -34,10 +39,10 @@ function ManageSection(props: ManageSectionPropType) {
     return (
         <>
             <div className="flex flex-col w-9/12 bg-gray-900 pt-10 items-center">
-                <ManageDevices isLoading={props.isLoading} devices={props.devices} clickHandler={clickHandler} />
+                <ManageDevices isLoading={props.isLoading} devices={props.devices} clickHandler={clickHandler} reloadPage= {reloadPage}/>
 
                 {/* Sensor Device details */}
-                <ManageSensors isLoading={props.isLoading} sensors={selsectedSensors} reloadPage={props.reloadPage}/>
+                <ManageSensors isLoading={props.isLoading} sensors={selsectedSensors} reloadPage={reloadPage}/>
             </div>
         </>
     )

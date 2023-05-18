@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import ProfileSection from "./ProfileSection";
 import ManageSection from "./ManageSection";
 import { UserContext } from "../../App";
+import { EdgeCardPayload, EdgeDevice, SensorDevice } from "./ProfilePageUtils";
 
 interface UserData {
     name: string,
@@ -47,17 +48,18 @@ const ProfilePage = () => {
                 setCurrentUser(currentUserData);
             }
             if (deviceData) {
-                for (let device of deviceData.devices) {
+                let deviceList: EdgeDevice[] = deviceData.devices;
+                for (let device of deviceList) {
                     let sensorsPromiseResponse = await fetch(`/data/sensors/${device.deviceId}`);
                     let sensors = await sensorsPromiseResponse.json()
-                    let sensorMap: Map<string, any> = new Map<string, any>();
-                    let provisonedSensors = new Set<string>(sensors.provisonedSensors.map((value: any) => {
+                    let sensorMap: Map<string, SensorDevice> = new Map<string, SensorDevice>();
+                    let provisonedSensors = new Set<string>(sensors.provisonedSensors.map((value: SensorDevice) => {
                         return value.sensorId;
                     }))
                     for (let reading of sensors.devices) {
                         sensorMap.set(reading.sensorId, reading);
                     }
-                    let sensorList = [];
+                    let sensorList:SensorDevice[] = [];
                     for (let [key, value] of sensorMap) {
                         if (provisonedSensors.has(key))
                             sensorList.push(value);

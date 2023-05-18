@@ -1,31 +1,5 @@
 import express from 'express';
 import { MongoClient } from 'mongodb';
-//import mongoose from "mongoose";
-//import { ObjectId } from 'mongodb';
-
-/*
-// Define connection string
-const uri = "mongodb://0.0.0.0:27017/portfolio";
-
-// Connect to MongoDB
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => {
-        console.log("MongoDB Connected…");
-    })
-    .catch(err => console.log(err));
-
-// Define a schema
-const ResourceSchema = new mongoose.Schema({
-    title: String,
-    description: String,
-    image: String,
-    sub_topics: Array
-});
-
-
-// Create a model
-const Resource = mongoose.model("resources", ResourceSchema);
-*/
 
 // Create an express app and use JSON middleware
 const sensorRouter = express.Router();
@@ -60,7 +34,7 @@ sensorRouter.route("/:deviceId")
                 res.status(500);
                 res.send("Something went wrong");
             } finally {
-                client.close();
+                await client.close();
             }
         };
 
@@ -89,7 +63,7 @@ sensorRouter.route("/:deviceId")
                 console.error("\n error when provisoning sensor : \n", error)
             }
             finally {
-                client.close();
+                await client.close();
             }
 
 
@@ -115,7 +89,7 @@ sensorRouter.route("/:deviceId")
                 console.error("\n error occured wheen deleting a sensor \n", error);
             }
             finally {
-                client.close();
+                await client.close();
             }
         }
         processUnprovisonSensorRequest();
@@ -123,29 +97,3 @@ sensorRouter.route("/:deviceId")
 
 
 export default sensorRouter;
-
-
-/*
-app.all('/resources/:resourceId', (req, res, next) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
-    next();
-});
-
-app.get('/resources/:resourceId', (req, res, next) => {
-    res.end("dishe sent : " + req.params.resourceId);
-});
-
-app.post('/resources/:resourceId', (req, res, next) => {
-    res.statusCode = 403
-    res.end("POST operation not supported on /resources/:resourceId");
-});
- 
-app.put('/resources/:resourceId', (req, res, next) => {
-    res.end("PUT operation sucessful ");
-});
-
-app.delete('/resources/:resourceId', (req, res, next) => {
-    res.end("Delete operation successful ");
-});
-*/

@@ -61,54 +61,6 @@ getWatcher().then((changeStream: any) => {
 });
 
 
-
-
-
-
-
-
-app.post('/', (req, res) => {
-    var connectionString = 'HostName=DummyHub77.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=MaZpu9OyelWoRacIGoKSsXHo5GizaVeDuQcDX5BYh4c=';
-
-    var registry = iothub.Registry.fromConnectionString(connectionString);
-
-    // Create a new device
-    var device = {
-        deviceId: 'sample-device-' + Date.now()
-    };
-
-    registry.create(device, function (err, deviceInfo, res) {
-        if (err) console.log(' error: ' + err.toString());
-        if (res) console.log(' status: ' + res.statusCode + ' ' + res.statusMessage);
-        if (deviceInfo) {
-            //console.log(' device info: ' + JSON.stringify(deviceInfo));
-            const sendData = async () => {
-                try {
-                    const response = await fetch("http://127.0.0.1:1880/configDevice", {
-                        method: "POST",
-                        headers: {
-                            "Accept": "application/json",
-                            "Content-type": "application/json; charset=UTF-8"
-                        },
-                        body: JSON.stringify({
-                            deviceId: deviceInfo.deviceId,
-                            key: deviceInfo.authentication?.symmetricKey?.primaryKey
-                        })
-                    })
-                    const responseVal = await response.text();
-                    console.log(responseVal)
-                }
-                catch (e) {
-                    console.log(e);
-                }
-            }
-            sendData();
-        }
-    });
-    res.end("Device Created name : " + device.deviceId);
-})
-
-
 server.on("upgrade", (request, socket, head) => {
     wsServer.handleUpgrade(request, socket, head, socket => {
         wsServer.emit('connection', socket, request);

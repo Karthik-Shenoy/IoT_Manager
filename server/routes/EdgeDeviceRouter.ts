@@ -60,7 +60,7 @@ EdgeDeviceRouter.route('/create')
                 deviceId: 'sample-device-' + Date.now()
             };
 
-            registry.create(device, function (err, deviceInfo, res) {
+            registry.create(device, async function (err, deviceInfo, res) {
                 if (err) console.log(' error: ' + err.toString());
                 if (res) console.log(' status: ' + res.statusCode + ' ' + res.statusMessage);
                 if (deviceInfo) {
@@ -68,7 +68,7 @@ EdgeDeviceRouter.route('/create')
                     const createAndInsertDeviceInDatabase = async () => {
                         const endpoint = req.body.deviceConnectionKey;
                         // change edge ip here
-                        const response = await fetch(`http://192.168.135.119:1880/${endpoint}`, {
+                        const response = await fetch(`http://192.168.6.119:1880/${endpoint}`, {
                             method: "POST",
                             headers: {
                                 "Accept": "application/json",
@@ -93,21 +93,21 @@ EdgeDeviceRouter.route('/create')
 
                         await client.connect()
                         await client.db("Users").collection("EdgeDevices").insertOne(newDevice)
-                                
+
                         return;
 
                     }
-                    try{
+                    try {
                         createAndInsertDeviceInDatabase()
                     }
-                    catch(error){
+                    catch (error) {
                         console.error("\n error when creating a device \n", error);
                         response.status(500);
                         res.send("Something Went Wrong");
                     }
-                    finally{
+                    finally {
                         console.log("sucessfully created a device")
-                        client.close();
+                        await client.close();
                     }
                 }
             });
@@ -136,25 +136,56 @@ EdgeDeviceRouter.route("/:userUID")
         res.setHeader('Content-Type', 'application/json');
         next();
     })
-    .get((req, res, next) => {
-        function getEdgeDeviceList() {
-            console.log(1);
-            client.connect().then(() => {
-                const deviceCursor = client.db("Users").collection("EdgeDevices").find({ UID: req.params.userUID });
-                let deviceLst: any[] = [];
-                deviceCursor.toArray().then((result) => {
-                    deviceLst = result;
-                    res.status(200);
-                    res.send(JSON.stringify({ devices: deviceLst }));
-                    console.log("/resource/userUid Got All the Edge Devices ; ");
-                    client.close()
-                })
-            });
+    .get(async (req, res, next) => {
+        async function getEdgeDeviceList() {
+
+            await client.connect();
+            const deviceCursor = client.db("Users").collection("EdgeDevices").find({ UID: req.params.userUID });
+
+            let deviceLst: any[] = await deviceCursor.toArray()
+            res.status(200);
+            res.send(JSON.stringify({ devices: deviceLst }));
+            console.log("/resource/userUid Got All the Edge Devices ; ");
+
         }
         try {
             getEdgeDeviceList()
         } catch (error) {
             console.log("error when retrieving Edge Devices", error);
+        } finally {
+            await client.close()
+        }
+    }).delete(async (req, res, next) => {
+        try {
+            const reqBody = req.body;
+            console.log(reqBody);
+            registry.delete(reqBody.deviceId, async (err, nullResponse, result) => {
+                console.log(err, nullResponse, result)
+                if (err) console.log(' error: ' + err.toString());
+                if (result) {
+                    console.log(' status: ' + result.statusCode + ' ' + result.statusMessage);
+                    const deleteDevice = async () => {
+                        await client.connect();
+                        let deleteLog = await client.db("Users").collection("EdgeDevices").deleteOne({ deviceId: reqBody.deviceId });
+                        deleteLog = await client.db("Usets").collection("SensorData").deleteMany({ deviceId: reqBody.deviceId });
+                        deleteLog = await client.db("Usets").collection("ProvisionedSensors").deleteMany({ deviceId: reqBody.deviceId });
+                        res.send(JSON.stringify({
+                            log: deleteLog
+                        }));
+                    }
+                    deleteDevice();
+                }
+            })
+
+        } catch (error) {
+            console.error("\n error when deleting edge \n ");
+            res.status(500);
+            res.send(JSON.stringify({
+                error: "error when deleting the edge device"
+            }));
+        }
+        finally {
+            await client.close();
         }
     })
 

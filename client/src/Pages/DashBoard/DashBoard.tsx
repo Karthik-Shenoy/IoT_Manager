@@ -13,6 +13,7 @@ function DashBoard() {
         sensorId: emptyValues.STRING,
         deviceId: emptyValues.STRING,
         deviceName: emptyValues.STRING,
+        reRender: false
     });
     let [dialogType, setDialogType] = useState(0);
     let { userUID } = useContext(UserContext);
@@ -24,11 +25,16 @@ function DashBoard() {
         const clickEventTarget = event ? event.target : null;
         const clickedElement = clickEventTarget as HTMLButtonElement
         let newDeviceData = clickedElement.id.split(":");
+        console.log("dashboard reRender : ",centerViewContext.reRender)
+        let reRender = !centerViewContext.reRender;
+        console.log("dashboard reRender : ",reRender)
         setCenterViewContextType({
             deviceId: newDeviceData[0],
             deviceName: newDeviceData[1],
-            sensorId: emptyValues.STRING
+            sensorId: emptyValues.STRING,
+            reRender: reRender
         });
+        
 
     }
 

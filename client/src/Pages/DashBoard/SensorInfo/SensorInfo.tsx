@@ -15,7 +15,8 @@ interface SensorInfoPropType {
   getAndSetData: Function,
   notifyRealTime: Function,
   setRefreshCallbacks: React.Dispatch<React.SetStateAction<Set<Function>>>
-  openDialog: Function
+  openDialog: Function,
+  reRender: boolean
 }
 
 function SensorInfo(props: SensorInfoPropType) {
@@ -141,11 +142,11 @@ function SensorInfo(props: SensorInfoPropType) {
       setWebSocket(webSocket);
       setInitSocket(false);
     }
-
+    console.log(reRender);
     return (() => {
     })
-
-  }, [props.deviceId, reRenderRef.current, realTimeFlagRef.current])
+    
+  }, [props.deviceId, reRenderRef.current, realTimeFlagRef.current, props.reRender])
 
 
   return (

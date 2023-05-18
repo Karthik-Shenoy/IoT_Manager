@@ -13,6 +13,7 @@ interface CenterViewPropType {
 function CenterView(props: CenterViewPropType) {
   let [data, setData] = useState<Map<string, any>>();
   let [realTimeFlag, setRealTimeFlag] = useState(false);
+
   let getAndSetData = (data: Map<string, any[]>) => {
     setData(data);
   }
@@ -20,6 +21,8 @@ function CenterView(props: CenterViewPropType) {
   const notifyRealTime = (flag: boolean) => {
     setRealTimeFlag(flag)
   }
+
+  
 
   return (
     <div className="w-9/12 max-[800px]:w-11/12 h-full flex flex-col justify-center ">
@@ -29,7 +32,8 @@ function CenterView(props: CenterViewPropType) {
         getAndSetData={getAndSetData}
         notifyRealTime={notifyRealTime}
         setRefreshCallbacks={props.setRefreshCallbacks} 
-        openDialog={props.openDialog}/>
+        openDialog={props.openDialog}
+        reRender={props.centerViewContext.reRender}/>
     </div>
   )
 }

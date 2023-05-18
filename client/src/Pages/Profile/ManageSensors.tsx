@@ -1,16 +1,34 @@
 import React, { useEffect, useRef, useState } from 'react'
 import ManageCard from './ManageCard'
 import Loader from '../../Components/Loader/Loader';
+import { SensorCardPayload, SensorDevice, getHumanReadableDate } from './ProfilePageUtils';
+import { useNavigate } from 'react-router-dom';
 
 interface ManageSensorsPropTypes {
-    sensors: any[] | null,
-    isLoading: boolean
-    reloadPage: Function;
+    sensors: SensorDevice[] | null,
+    isLoading: boolean,
+    reloadPage: Function
 }
 
 function ManageSensors(props: ManageSensorsPropTypes) {
     const divRef = useRef<HTMLDivElement>(null);
     //for animations
+
+    const getSensorCardPayload = (sensorDevice: SensorDevice):SensorCardPayload =>{
+        let sensorCardPayload: SensorCardPayload={
+            deviceId: "",
+            sensorId: "",
+            lastReading: 0,
+            lastReadingDate: "",
+            lastReadingTime: ""
+        };
+        sensorCardPayload.deviceId = sensorDevice.deviceId;
+        sensorCardPayload.sensorId = sensorDevice.sensorId;
+        sensorCardPayload.lastReading = sensorDevice.data;
+        sensorCardPayload.lastReadingDate = getHumanReadableDate(sensorDevice.date);
+        sensorCardPayload.lastReadingTime =   sensorDevice.time;
+        return sensorCardPayload;
+    }
 
     const deleteHandler = (event: React.MouseEvent) => {
         let sensorCardButton = event.target as HTMLButtonElement;
@@ -29,7 +47,7 @@ function ManageSensors(props: ManageSensorsPropTypes) {
                 }
             })
             response = await response.json();
-            console.log(typeof(props.reloadPage()));
+            props.reloadPage();
             console.log(response)
         }
 
@@ -64,8 +82,9 @@ function ManageSensors(props: ManageSensorsPropTypes) {
                                 props.sensors && (
                                     props.sensors.length === 0 ? <ManageCard clickHandler={() => { }} deleteHandler={() => { }} payload={null} type={3} /> :
                                         props.sensors.map((value, index) => {
+                                            let sensorCardPayload = getSensorCardPayload(value);
                                             return (
-                                                <ManageCard clickHandler={() => { }} deleteHandler={deleteHandler} payload={value} type={2} />
+                                                <ManageCard clickHandler={() => { }} deleteHandler={deleteHandler} payload={sensorCardPayload} type={2} />
                                             )
                                         })
                                 )
