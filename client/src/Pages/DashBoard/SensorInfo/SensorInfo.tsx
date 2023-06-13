@@ -44,7 +44,7 @@ function SensorInfo(props: SensorInfoPropType) {
   const provisonSensorDevice: MouseEventHandler = (event: React.MouseEvent) => {
     let provisonButton = event.target as HTMLButtonElement;
     const sensorId = provisonButton.id;
-    
+
     const addSensorToProvisonedLst = async () => {
       const response = await fetch(`/data/sensors/${props.deviceId}`, {
         method: "POST",
@@ -85,43 +85,53 @@ function SensorInfo(props: SensorInfoPropType) {
         setIsLoading(true)
       }
 
-      let sensorsPromiseResponse = await fetch(`/data/sensors/${props.deviceId}`);
-      let sensorsListResponse = await sensorsPromiseResponse.json();
-      
-      let readings = sensorsListResponse.devices;
-      
+      try {
+        let sensorsPromiseResponse = await fetch(`/data/sensors/${props.deviceId}`);
+        let sensorsListResponse = await sensorsPromiseResponse.json();
 
-      let provisonedSensors = new Set(sensorsListResponse.provisonedSensors.map((value: any) => {
-        return value.sensorId;
-      }));
 
-      //compartmentalize sensors according to sensorId
-      for (let reading of readings) {
-        let index = reading.sensorId;
-        let oldList = devices.get(index);
-        if (!oldList)
-          oldList = [reading];
-        else
-          oldList.push(reading);
-        devices.set(index, oldList);
-      }
-      props.getAndSetData(devices);
 
-      let tempLst: JSX.Element[] = [];
-      for (let [key, value] of devices) {
-        let latestValue = value[value.length - 1];
-        latestValue.width = 1;
-        latestValue.isProvisioned = false;
-        let cardClickHandler = provisonSensorDevice;
-        if (provisonedSensors.has(key)) {
-          latestValue.isProvisioned = true;
-          cardClickHandler = props.loadSensorChart;
+        let readings = sensorsListResponse.devices;
+
+
+        let provisonedSensors = new Set(sensorsListResponse.provisonedSensors.map((value: any) => {
+          return value.sensorId;
+        }));
+
+        //compartmentalize sensors according to sensorId
+        for (let reading of readings) {
+          let index = reading.sensorId;
+          let oldList = devices.get(index);
+          if (!oldList)
+            oldList = [reading];
+          else
+            oldList.push(reading);
+          devices.set(index, oldList);
         }
-        tempLst.push(<SideBarCard clickHandler={cardClickHandler} payload={latestValue} key={key} type={2} />);
+        props.getAndSetData(devices);
+
+        let tempLst: JSX.Element[] = [];
+        for (let [key, value] of devices) {
+          let latestValue = value[value.length - 1];
+          latestValue.width = 1;
+          latestValue.isProvisioned = false;
+          let cardClickHandler = provisonSensorDevice;
+          if (provisonedSensors.has(key)) {
+            latestValue.isProvisioned = true;
+            cardClickHandler = props.loadSensorChart;
+          }
+          tempLst.push(<SideBarCard clickHandler={cardClickHandler} payload={latestValue} key={key} type={2} />);
+        }
+        setRenderLst(tempLst);
+
+        setIsLoading(false);
       }
-      setRenderLst(tempLst);
-      
-      setIsLoading(false);
+      catch (error) {
+        const newValue = !(reRenderRef.current)
+        setReRender(newValue);
+        reRenderRef.current = newValue;
+        
+      }
     }
     loadData();
 
@@ -130,7 +140,7 @@ function SensorInfo(props: SensorInfoPropType) {
 
       webSocket.onmessage = (event: MessageEvent<any>) => {
         //let dataBaseEventObject = JSON.parse(event.data);
-        
+
         if (realTimeFlagRef.current) {
           console.log("webSocket Message Recieved");
           const newValue = !(reRenderRef.current)
@@ -145,7 +155,7 @@ function SensorInfo(props: SensorInfoPropType) {
     console.log(reRender);
     return (() => {
     })
-    
+
   }, [props.deviceId, reRenderRef.current, realTimeFlagRef.current, props.reRender])
 
 

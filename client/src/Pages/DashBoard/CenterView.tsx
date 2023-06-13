@@ -25,7 +25,7 @@ function CenterView(props: CenterViewPropType) {
   
 
   return (
-    <div className="w-9/12 max-[800px]:w-11/12 h-full flex flex-col justify-center ">
+    <div className="w-9/12 max-[900px]:w-full h-full flex flex-col justify-center ">
       <GraphPlot sensorId={props.centerViewContext.sensorId} deviceName={props.centerViewContext.deviceName} data={data} realTimeFlag={realTimeFlag} />
       <SensorInfo deviceId={props.centerViewContext.deviceId}
         loadSensorChart={props.loadSensorChart}

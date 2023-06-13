@@ -36,28 +36,34 @@ app.get('/', (req, res) => {
 
 const wsServer = new webSocket.Server({ noServer: true });
 const getWatcher = async () => {
-    client = await client.connect();
-    const changeStream = client.db("Users").collection("SensorData").watch();
-    console.log("Database Watcher Connected Connected")
-    return changeStream;
+    try {
+        client = await client.connect();
+        const changeStream = client.db("Users").collection("SensorData").watch();
+        console.log("Database Watcher Connected Connected")
+        return changeStream;
+    } catch (error) {
+        console.log("error when establishing change listener");
+    }
 }
 getWatcher().then((changeStream: any) => {
-    wsServer.on('connection', socket => {
-        //socket.on('message', message => console.log(message.toString()));
-        console.log(wsServer.clients.size)
-        console.log("Web Socket Connection Established")
-        changeStream.on('change', (change: ChangeStreamDocument) => {
-            socket.send(JSON.stringify({ changed: true }));
-        })
-        if (wsServer.clients.size > 0) {
-            for (let client of wsServer.clients) {
-                client.onclose = () => {
-                    console.log("connection closed");
+    if (changeStream) {
+        wsServer.on('connection', socket => {
+            //socket.on('message', message => console.log(message.toString()));
+            console.log(wsServer.clients.size)
+            console.log("Web Socket Connection Established")
+            changeStream.on('change', (change: ChangeStreamDocument) => {
+                socket.send(JSON.stringify({ changed: true }));
+            })
+            if (wsServer.clients.size > 0) {
+                for (let client of wsServer.clients) {
+                    client.onclose = () => {
+                        console.log("connection closed");
+                    }
                 }
             }
-        }
 
-    });
+        });
+    }
 });
 
 

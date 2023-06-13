@@ -43,7 +43,7 @@ function ProfileSection(props: ProfileSectionPropType) {
         <>
             {
 
-                <div className="flex flex-col w-3/12 bg-gray-700 items-center pt-10">
+                <div className="flex flex-col w-3/12 bg-gray-700 items-center pt-10 max-[900px]:p-5 max-[900px]:w-full">
                     {props.isLoading ? <div className="justify-self-center"><Loader show={props.isLoading} /></div> :
                         <>
                             <div className="m-4">
@@ -55,20 +55,20 @@ function ProfileSection(props: ProfileSectionPropType) {
                             </div>
                             <div className="p-2 flex flex-col bg-gray-800 rounded-lg shadow-lg items-center w-11/12">
                                 <div className="p-4 flex flex-row items-center w-11/12">
-                                    <p className="text-white text-center font-bold text-lg w-5/12">Name : </p>
-                                    <div className="mx-3 flex-grow w-7/12 font-bold bg-gray-700 text-white shadow-lg rounded-lg hover:border-2 hover:scale-[1.05] hover:border-schn-500 transition-all duration-1000 p-3">  {props.name}</div>
+                                    <p className="text-white text-center font-bold text-sm w-5/12 ">Name : </p>
+                                    <div className="mx-3 flex-grow w-7/12 text-sm font-bold bg-gray-700 text-white shadow-lg rounded-lg hover:border-2 hover:scale-[1.05] hover:border-schn-500 transition-all duration-1000 p-3">{props.name}</div>
                                 </div>
                                 <div className="p-4 flex flex-row items-center w-11/12">
-                                    <p className="text-white text-center font-bold text-lg w-5/12">Email Address : </p>
-                                    <div className="mx-3 w-7/12 font-bold bg-gray-700 text-white shadow-lg rounded-lg hover:border-2 hover:scale-[1.05] hover:border-schn-500 transition-all duration-1000 p-3">  {props.emailId}</div>
+                                    <p className="text-white text-center text-sm font-bold flex-shrink w-5/12 ">Email Address : </p>
+                                    <div className="mx-3 font-bold text-sm bg-gray-700 text-white shadow-lg rounded-lg hover:border-2 hover:scale-[1.05] hover:border-schn-500 transition-all duration-1000 p-3">{props.emailId}</div>
                                 </div>
                                 <div className="p-4 flex flex-row items-center w-11/12">
-                                    <p className="text-white text-center font-bold text-lg w-5/12">Total edge devices : </p>
-                                    <div className="mx-3 w-7/12 font-bold bg-gray-700 text-white shadow-lg rounded-lg hover:border-2 hover:scale-[1.05] hover:border-schn-500 transition-all duration-1000 p-3 text-center">  {counters.numEdgeDevices}</div>
+                                    <p className="text-white text-center font-bold text-sm w-5/12">Total edge devices : </p>
+                                    <div className="mx-3 w-7/12 font-bold bg-gray-700 text-sm text-white shadow-lg rounded-lg hover:border-2 hover:scale-[1.05] hover:border-schn-500 transition-all duration-1000 p-3 text-center">{counters.numEdgeDevices}</div>
                                 </div>
                                 <div className="p-4 flex flex-row items-center w-11/12">
-                                    <p className="text-white text-center font-bold text-lg w-5/12">Total edge devices : </p>
-                                    <div className="mx-3 w-7/12 font-bold bg-gray-700 text-white shadow-lg rounded-lg hover:border-2 hover:scale-[1.05] hover:border-schn-500 transition-all duration-1000 p-3 text-center">  {counters.numSensorDevices}</div>
+                                    <p className="text-white text-center font-bold text-sm w-5/12">Total edge devices : </p>
+                                    <div className="mx-3 w-7/12 font-bold bg-gray-700 text-sm text-white shadow-lg rounded-lg hover:border-2 hover:scale-[1.05] hover:border-schn-500 transition-all duration-1000 p-3 text-center">  {counters.numSensorDevices}</div>
                                 </div>
                             </div>
 

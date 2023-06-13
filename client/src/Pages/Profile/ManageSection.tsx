@@ -38,7 +38,7 @@ function ManageSection(props: ManageSectionPropType) {
 
     return (
         <>
-            <div className="flex flex-col w-9/12 bg-gray-900 pt-10 items-center">
+            <div className="flex flex-col w-9/12 bg-gray-900 pt-10 items-center max-[900px]: w-full">
                 <ManageDevices isLoading={props.isLoading} devices={props.devices} clickHandler={clickHandler} reloadPage= {reloadPage}/>
 
                 {/* Sensor Device details */}

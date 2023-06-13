@@ -23,7 +23,7 @@ module.exports = async function (context, eventGridEvent) {
             context.log("error : ", error)
         }
         finally {
-            client.close();
+            await client.close();
         }
 
     }

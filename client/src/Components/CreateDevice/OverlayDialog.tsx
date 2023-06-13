@@ -45,6 +45,7 @@ function OverlayDialog(props: DialogPropType) {
       });
 
       const responseVal = await response.text();
+      console.log("Response : ", responseVal);
     };
     fetchResource().then(() => {
       console.log("loading...ended");
@@ -75,8 +76,8 @@ function OverlayDialog(props: DialogPropType) {
   return (
     <>
       {props.dialogType > 0 && (
-        <div className="fixed font-mono inset-0 z-50 flex items-center justify-center overflow-auto bg-gray-900 bg-opacity-75">
-          <div ref={dialogRef} className="relative bg-gray-700 w-7/12 h-7/12 max-w-md p-6 mx-auto rounded-md transition-all duration-1000">
+        <div className="fixed font-mono inset-0 z-50 flex items-center justify-center overflow-auto bg-gray-900 bg-opacity-75 max-[900px]:p-[20px]">
+          <div ref={dialogRef} className="relative bg-gray-700 w-7/12 h-7/12 max-w-md p-6 mx-auto rounded-md transition-all duration-1000 max-[900px]:w-auto ">
             {
               isLoading ? <Loader show={isLoading} /> : dialogElement
             }

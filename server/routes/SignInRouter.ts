@@ -10,6 +10,7 @@ const generateUID = () => {
 }
 
 const uri = "mongodb+srv://karthik:hello123@sensorflow.lirh05g.mongodb.net";
+console.log(1);
 const client = new MongoClient(uri);
 
 // Create an express app and use JSON middleware
@@ -34,22 +35,28 @@ SignInRouter.route('/')
             email: req.body.email,
             password: req.body.password,
         }
-        client.connect().then(async () => {
-            const existingUser = await client.db("Users").collection("UserData").findOne({ email: newUser.email });
-            if (!existingUser) {
-                res.status(400);
-                res.end(JSON.stringify({ UID: 20 }));
+        const authenticateUser = async () => {
+            try {
+                await client.connect();
+                const existingUser = await client.db("Users").collection("UserData").findOne({ email: newUser.email });
+                if (!existingUser) {
+                    res.status(400);
+                    res.end(JSON.stringify({ UID: 20 }));
+                } else if (newUser.password != existingUser.password) {
+                    res.status(400)
+                    res.end(JSON.stringify({ UID: 21 }))
+                }
+                else {
+                    res.status(200);
+                    res.end(JSON.stringify({ UID: existingUser.UID }));
+                }
+            } catch (error) {
+                console.error("error when authenticating the user");
+            } finally {
+                await client.close();
             }
-            else if (newUser.password != existingUser.password) {
-                res.status(400)
-                res.end(JSON.stringify({ UID: 21 }))
-            }
-            else {
-                res.status(200);
-                res.end(JSON.stringify({ UID: existingUser.UID }));
-            }
-            client.close();
-        });
+        }
+        authenticateUser();
     })
     .put((req, res, next) => {
         res.status(403);
@@ -67,7 +74,9 @@ SignInRouter.route('/:userUID')
         next();
     })
     .get(async (req, res, next) => {
-        client.connect().then(async () => {
+        console.log(1);
+        try {
+            await client.connect();
             let retrievedUserDoc = await client.db("Users").collection("UserData").findOne({ UID: req.params.userUID });
             if (retrievedUserDoc) {
                 res.end(JSON.stringify({
@@ -83,7 +92,9 @@ SignInRouter.route('/:userUID')
                     found: false
                 }))
             }
-        })
+        } catch (error) {
+            console.log("Error at User log in")
+        }
     })
 
 

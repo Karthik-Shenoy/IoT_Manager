@@ -67,8 +67,8 @@ EdgeDeviceRouter.route('/create')
                     //console.log(' device info: ' + JSON.stringify(deviceInfo));
                     const createAndInsertDeviceInDatabase = async () => {
                         const endpoint = req.body.deviceConnectionKey;
-                        // change edge ip here
-                        const response = await fetch(`http://192.168.6.119:1880/${endpoint}`, {
+                        // change edge ip here 192.168.129.119:1880
+                        const response = await fetch(`http://192.168.129.119:1880/${endpoint}`, {
                             method: "POST",
                             headers: {
                                 "Accept": "application/json",
@@ -93,12 +93,13 @@ EdgeDeviceRouter.route('/create')
 
                         await client.connect()
                         await client.db("Users").collection("EdgeDevices").insertOne(newDevice)
-
                         return;
 
                     }
                     try {
                         createAndInsertDeviceInDatabase()
+                        response.status(200);
+                        response.send("Device Created Sucessfully !")
                     }
                     catch (error) {
                         console.error("\n error when creating a device \n", error);
@@ -160,7 +161,6 @@ EdgeDeviceRouter.route("/:userUID")
             const reqBody = req.body;
             console.log(reqBody);
             registry.delete(reqBody.deviceId, async (err, nullResponse, result) => {
-                console.log(err, nullResponse, result)
                 if (err) console.log(' error: ' + err.toString());
                 if (result) {
                     console.log(' status: ' + result.statusCode + ' ' + result.statusMessage);

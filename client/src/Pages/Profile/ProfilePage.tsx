@@ -40,6 +40,7 @@ const ProfilePage = () => {
             setIsLoading(true);
             let response = await fetch(`/data/signin/${userUID}`);
             const currentUserData: UserData = await response.json();
+            console.log("User Data : ", currentUserData);
             response = await fetch(`/data/edgeDevices/${userUID}`);
             const deviceData = await response.json();
 
@@ -74,9 +75,10 @@ const ProfilePage = () => {
         getData();
     }, [userUID, reRender])
     return (
-        <div className="flex flex-row bg-gray-900 justify-center h-full min-h-screen">
+        <div className="flex flex-row bg-gray-900 justify-center h-full min-h-screen max-[900px]:p-[20px] max-[900px]:flex-col">
             {/* Sidebar */}
             <ProfileContext.Provider value={{reRender, setReRender}}>
+                
                 <ProfileSection isLoading={isLoading} name={currentUser.name} emailId={currentUser.emailId} devices={devices} />
 
                 {/* Manage Edge Devices */}

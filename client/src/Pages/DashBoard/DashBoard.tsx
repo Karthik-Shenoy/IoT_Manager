@@ -70,7 +70,7 @@ function DashBoard() {
         }
     }
     return (
-        <div className="flex flex-row bg-gray-900 justify-center pt-10 max-[700px]:px-[20px]">
+        <div className="flex flex-row bg-gray-900 justify-center pt-10 max-[900px]:px-[20px] max-[900px]:flex-col">
             <OverlayDialog dialogType={dialogType} closeDialog={closeDialog} refresh={refresh}>
                 <CenterView
                     centerViewContext={centerViewContext}

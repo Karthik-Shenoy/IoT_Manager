@@ -10,7 +10,8 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/data/, ''),
       }
-    }
+    },
+    host: true
   },
   plugins: [react()],
 });
